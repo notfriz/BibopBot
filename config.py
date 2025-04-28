@@ -37,5 +37,16 @@ TRANSCRIPTION_API = 'speech_recognition'
 
 # Configuración para API de Google Cloud Speech-to-Text
 GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-if not GOOGLE_APPLICATION_CREDENTIALS:
-    raise ValueError("La variable de entorno GOOGLE_APPLICATION_CREDENTIALS no está configurada.")
+if GOOGLE_APPLICATION_CREDENTIALS:
+    # Crear archivo temporal para las credenciales
+    import json
+    import tempfile
+    
+    credentials_file = tempfile.NamedTemporaryFile(delete=False, suffix='.json')
+    with open(credentials_file.name, 'w') as f:
+        f.write(GOOGLE_APPLICATION_CREDENTIALS)
+    
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_file.name
+else:
+    print("Advertencia: GOOGLE_APPLICATION_CREDENTIALS no está configurado, usando reconocimiento de voz alternativo")
+    TRANSCRIPTION_API = 'speech_recognition'
