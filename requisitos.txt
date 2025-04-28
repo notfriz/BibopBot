@@ -1,8 +1,0 @@
-discord.py[voice]>=2.0.0
-python-dotenv>=0.19.0
-pydub>=0.25.1
-SpeechRecognition>=3.8.1
-PyNaCl>=1.4.0
-ffmpeg-python>=0.2.0
-google-cloud-speech>=2.13.1
-aiohttp>=3.8.0p
