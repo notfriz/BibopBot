@@ -9,4 +9,5 @@ dependencies = [
     "google-cloud-speech>=2.21.0",
     "speechrecognition>=3.10.0",
     "ffmpeg-python>=0.2.0",
+    "numpy>=2.2.5",
 ]
