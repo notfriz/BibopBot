@@ -63,6 +63,6 @@ class HelpCommands(commands.Cog):
         
         await ctx.send(embed=embed)
 
-def setup(bot):
-    bot.add_cog(HelpCommands(bot))
-    logger.info('Módulo de ayuda cargado')
+async def setup(bot):
+    await bot.add_cog(HelpCommands(bot))
+    logger.info('Módulo de ayuda cargado')o('Módulo de ayuda cargado')

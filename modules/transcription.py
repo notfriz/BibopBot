@@ -127,6 +127,6 @@ class TranscriptionCommands(commands.Cog):
             else:
                 await ctx.send(f"...(continuación)...\n{chunk}")
 
-def setup(bot):
-    bot.add_cog(TranscriptionCommands(bot))
+async def setup(bot):
+    await bot.add_cog(TranscriptionCommands(bot))
     logger.info('Módulo de transcripción cargado')
