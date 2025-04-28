@@ -25,7 +25,6 @@ bot = commands.Bot(command_prefix=config.COMMAND_PREFIX, intents=intents)
 # Variable para almacenar los canales activos
 active_voice_channels = {}
 
-
 @bot.event
 async def on_ready():
     logger.info(f'Bot conectado como {bot.user.name}')
@@ -35,69 +34,43 @@ async def on_ready():
     # Establecer estado de "escuchando"
     await bot.change_presence(
         activity=discord.Activity(type=discord.ActivityType.listening,
-                                  name=f"{config.COMMAND_PREFIX}help"))
-
+                                name=f"{config.COMMAND_PREFIX}help"))
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    # Ignorar actualizaciones del propio bot
     if member.id == bot.user.id:
         return
 
-    # Si un usuario se unió a un canal de voz
     if before.channel is None and after.channel is not None:
         channel = after.channel
-        # Verificar si el bot ya está en este canal
-        voice_client = discord.utils.get(bot.voice_clients,
-                                         guild=channel.guild)
+        voice_client = discord.utils.get(bot.voice_clients, guild=channel.guild)
 
         if voice_client is None:
-            # Conectar al canal si no está ya conectado
             try:
                 voice_client = await channel.connect()
-                logger.info(
-                    f'Bot conectado al canal {channel.name} en {channel.guild.name}'
-                )
+                logger.info(f'Bot conectado al canal {channel.name} en {channel.guild.name}')
 
-                # Verificar si ya hay una grabación activa en este canal
                 recording_cog = bot.get_cog('RecordingCommands')
                 if recording_cog:
                     guild_id = channel.guild.id
                     channel_id = channel.id
 
-                    if guild_id in recording_cog.active_recordings and channel_id in recording_cog.active_recordings[
-                            guild_id]:
-                        logger.info(
-                            f"Ya hay una grabación activa en el canal {channel.name}. No se iniciará una nueva grabación."
-                        )
+                    if guild_id in recording_cog.active_recordings and channel_id in recording_cog.active_recordings[guild_id]:
+                        logger.info(f"Ya hay una grabación activa en el canal {channel.name}")
                         return
 
-                    # Iniciar grabación automáticamente
-                    ctx = await bot.get_context(
-                        await channel.guild.system_channel.send(f""))
+                    ctx = await bot.get_context(await channel.guild.system_channel.send(f""))
                     ctx.voice_client = voice_client
                     ctx.channel = channel
                     await recording_cog.start_recording(ctx)
             except Exception as e:
                 logger.error(f'Error al conectar al canal de voz: {e}')
 
-
-async def setup_cogs():
-    # Registrar los módulos (cogs)
-    setup_recording(bot)
-    setup_transcription(bot)
-    setup_help(bot)
-
-    logger.info('Módulos cargados correctamente')
-
-
-def main():
-    # Registrar los módulos (cogs)
-    asyncio.run(setup_cogs())
-
-    # Iniciar el bot
-    bot.run(config.DISCORD_TOKEN)
-
+async def main():
+    await bot.load_extension('modules.recording')
+    await bot.load_extension('modules.transcription')
+    await bot.load_extension('modules.help')
+    await bot.start(config.DISCORD_TOKEN)
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
