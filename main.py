@@ -74,11 +74,14 @@ async def on_voice_state_update(member, before, after):
             except Exception as e:
                 logger.error(f'Error al conectar al canal de voz: {e}')
 
+async def setup_cogs():
+    await setup_recording(bot)
+    await setup_transcription(bot)
+    await setup_help(bot)
+
 def main():
     # Registrar los módulos (cogs)
-    setup_recording(bot)
-    setup_transcription(bot)
-    setup_help(bot)
+    asyncio.run(setup_cogs())
     
     # Iniciar el bot
     bot.run(config.DISCORD_TOKEN)
