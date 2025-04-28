@@ -186,7 +186,7 @@ cython_debug/
 #  JSON files are often used for configuration, data exchange, and serialization.
 #  They are generally not ignored unless they contain sensitive information or are generated
 #  by a build process.  For example, if you have a JSON file that contains API keys or other
-.transbot-api-457319-109028959201.json
+    transbot-api-457319-109028959201.json
 #  sensitive information, you should add it to your .gitignore file.  However, if the JSON file
 #  is used for configuration or data exchange, it is generally not necessary to ignore it.
 #  In this case, you can choose to include it in your version control system.
