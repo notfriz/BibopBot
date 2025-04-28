@@ -191,3 +191,5 @@ async def _transcribe_with_google(audio_file):
     except Exception as e:
         logger.error(f"Error en transcripción con Google: {e}")
         raise Exception(f"Error en transcripción con Google Cloud: {str(e)}")
+    #except ImportError:
+    #    logger.error("Google Cloud Speech-to-Text no está instalado. Instala google-cloud-speech para usar esta función.") 
