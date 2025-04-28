@@ -65,4 +65,4 @@ class HelpCommands(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(HelpCommands(bot))
-    logger.info('Módulo de ayuda cargado')o('Módulo de ayuda cargado')
+    logger.info('Módulo de ayuda cargado')
