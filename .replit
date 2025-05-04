@@ -3,6 +3,7 @@ run = "start"
 
 [nix]
 channel = "stable-24_05"
+packages = ["ffmpeg-full", "libsodium"]
 
 [deployment]
 run = ["sh", "-c", "start"]

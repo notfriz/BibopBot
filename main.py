@@ -60,6 +60,7 @@ async def on_voice_state_update(member, before, after):
                         return
 
                     ctx = await bot.get_context(await channel.guild.system_channel.send(f""))
+
                     ctx.voice_client = voice_client
                     ctx.channel = channel
                     await recording_cog.start_recording(ctx)
