@@ -3,6 +3,7 @@ from discord.ext import commands
 import asyncio
 import logging
 import config
+from aiohttp import web
 from modules.recording import setup as setup_recording
 from modules.transcription import setup as setup_transcription
 from modules.help import setup as setup_help
@@ -72,11 +73,28 @@ async def on_voice_state_update(member, before, after):
             except Exception as e:
                 logger.error(f'Error inesperado al conectar al canal de voz: {e}')
 
+async def health_check(request):
+    return web.Response(text="Bot is running!")
+
+async def start_webserver():
+    app = web.Application()
+    app.router.add_get('/', health_check)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', 5000)
+    await site.start()
+    logger.info("HTTP server started on port 5000")
+
 async def main():
     await bot.load_extension('modules.recording')
     await bot.load_extension('modules.transcription')
     await bot.load_extension('modules.help')
-    await bot.start(config.DISCORD_TOKEN)
+    
+    # Start both the bot and web server
+    await asyncio.gather(
+        start_webserver(),
+        bot.start(config.DISCORD_TOKEN)
+    )
 
 if __name__ == "__main__":
     asyncio.run(main())

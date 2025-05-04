@@ -668,6 +668,7 @@ name = "repl-nix-workspace"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "aiohttp" },
     { name = "discord-py", extra = ["voice"] },
     { name = "ffmpeg-python" },
     { name = "google-cloud-speech" },
@@ -679,6 +680,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "aiohttp", specifier = ">=3.11.18" },
     { name = "discord-py", extras = ["voice"], specifier = ">=2.5.2" },
     { name = "ffmpeg-python", specifier = ">=0.2.0" },
     { name = "google-cloud-speech", specifier = ">=2.21.0" },
