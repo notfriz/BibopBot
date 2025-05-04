@@ -69,6 +69,9 @@ class RecordingCommands(commands.Cog):
 
     @commands.command(name='detener', help='Detiene la grabación actual y la guarda con un nombre opcional')
     async def stop_recording(self, ctx, recording_name=None):
+        if ctx.author.bot:
+            return
+            
         guild_id = ctx.guild.id
 
         # Verificar si hay grabaciones activas en este servidor

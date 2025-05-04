@@ -1,3 +1,4 @@
+
 import asyncio
 import discord
 import wave
@@ -12,12 +13,15 @@ import config
 
 logger = logging.getLogger('discord-recording-bot.audio_processing')
 
-class AudioSink(discord.AudioSink):
+class AudioSink:
     def __init__(self, recorder):
         self.recorder = recorder
 
     def write(self, data):
         self.recorder._write_audio(data.data)
+
+    def cleanup(self):
+        pass
 
 class AudioRecorder:
     def __init__(self, voice_client, sample_rate=48000, channels=2):
@@ -30,15 +34,13 @@ class AudioRecorder:
         self.sink = AudioSink(self)
 
     def _write_wav_header(self):
-        """Escribe el encabezado WAV en el buffer de audio."""
         with wave.open(self.audio_data, 'wb') as wav_file:
             wav_file.setnchannels(self.channels)
-            wav_file.setsampwidth(2)  # 16-bit audio
+            wav_file.setsampwidth(2)
             wav_file.setframerate(self.sample_rate)
         self.wav_header_written = True
 
     def _write_audio(self, data):
-        """Escribe datos de audio al buffer."""
         if self.recording:
             try:
                 if not self.wav_header_written:
@@ -48,29 +50,25 @@ class AudioRecorder:
                 logger.error(f"Error writing audio data: {e}")
 
     def start(self):
-        """Inicia la grabación."""
         self.recording = True
         self.audio_data = BytesIO()
         self.wav_header_written = False
-        self.voice_client.start_recording(self.sink, encoding='wav', sample_rate=self.sample_rate)
+        self.voice_client.listen(self.sink)
         logger.info("Recording started")
 
     def stop(self):
-        """Detiene la grabación y retorna los datos de audio."""
         if not self.recording:
             return None
 
         self.recording = False
-        self.voice_client.stop_recording()
+        self.voice_client.stop_listening()
 
-        # Get the audio data
         audio_data = self.audio_data.getvalue()
         self.audio_data.close()
 
         return audio_data
 
 async def transcribe_audio(file_path, api='speech_recognition'):
-    """Transcribe audio file to text."""
     if api == 'speech_recognition':
         recognizer = sr.Recognizer()
         with sr.AudioFile(file_path) as source:
