@@ -47,7 +47,7 @@ async def on_voice_state_update(member, before, after):
 
         if voice_client is None:
             try:
-                voice_client = await channel.connect()
+                voice_client = await channel.connect(timeout=20.0, reconnect=True)
                 logger.info(f'Bot conectado al canal {channel.name} en {channel.guild.name}')
 
                 recording_cog = bot.get_cog('RecordingCommands')
@@ -59,13 +59,18 @@ async def on_voice_state_update(member, before, after):
                         logger.info(f"Ya hay una grabación activa en el canal {channel.name}")
                         return
 
-                    ctx = await bot.get_context(await channel.guild.system_channel.send(f""))
+                    system_channel = channel.guild.system_channel or channel.guild.text_channels[0]
+                    ctx = await bot.get_context(await system_channel.send(""))
 
                     ctx.voice_client = voice_client
                     ctx.channel = channel
                     await recording_cog.start_recording(ctx)
+            except discord.ClientException as e:
+                logger.error(f'Error de cliente al conectar al canal de voz: {e}')
+            except asyncio.TimeoutError:
+                logger.error('Tiempo de espera agotado al intentar conectar al canal de voz')
             except Exception as e:
-                logger.error(f'Error al conectar al canal de voz: {e}')
+                logger.error(f'Error inesperado al conectar al canal de voz: {e}')
 
 async def main():
     await bot.load_extension('modules.recording')
